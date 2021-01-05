@@ -38,9 +38,9 @@ async function handler() {
       await page.waitForSelector("input[type='button'][value='Logoff']");
   
       const reportExists = await page.evaluate(() => {
-        const tableAlert = document.querySelector("table.tbl_wartezeiten div.alert");
+        const body = document.querySelector("body").textContent;
   
-        return !tableAlert || tableAlert.textContent.trim() !== "REPORT NOT AVAILABLE";
+        return body.includes("REPORT NOT AVAILABLE") === false;
       });
   
       await page.close();
