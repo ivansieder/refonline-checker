@@ -35,21 +35,21 @@ async function handler() {
   
       await page.click("input[type='submit'][value='View documents']");
   
-      await page.waitForSelector("input[type='button'][value='Logoff']");
+      await page.waitForSelector("table.tbl_wartezeiten");
   
       const reportExists = await page.evaluate(() => {
         const body = document.querySelector("body").textContent;
   
-        return body.includes("REPORT NOT AVAILABLE") === false;
+        return body.includes("REPORT NOT AVAILABLE") === false && body.includes("GENERIC ERROR") === false;
       });
-  
-      await page.close();
-  
+
       if (reportExists) {
-        user.found = true
+        user.found = true;
       } else {
         console.log(`${dayjs().format("YYYY-MM-DD HH:mm:ss")} - No report found for ${user.name}`);
       }
+
+      await page.close();
     }
   
     const usersToNotify = users.filter((user) => user.found === true && user.notified === false);
