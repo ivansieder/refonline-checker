@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import fs from "fs/promises";
 import notifier from "node-notifier";
 import puppeteer from "puppeteer";
@@ -47,7 +48,7 @@ async function handler() {
       if (reportExists) {
         user.found = true
       } else {
-        console.log(`No report found for ${user.name}`);
+        console.log(`${dayjs().format("YYYY-MM-DD HH:mm:ss")} - No report found for ${user.name}`);
       }
     }
   
@@ -60,6 +61,8 @@ async function handler() {
 
       notifier.notify(`Report found for: ${usersToNotify.map((user) => user.name).join(", ")}`);
     }
+
+    console.log("-------------------------------------------------------------------------");
   } catch (error) {
     console.error(error);
   } finally {
