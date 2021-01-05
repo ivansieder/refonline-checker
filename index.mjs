@@ -1,9 +1,14 @@
 import dayjs from "dayjs";
+import fetch from "node-fetch"
 import fs from "fs/promises";
 import notifier from "node-notifier";
 import puppeteer from "puppeteer";
 
-const users = JSON.parse((await fs.readFile("./users.json", "utf8"))).map((user) => ({
+const config = JSON.parse((await fs.readFile("./config.json", "utf8")));
+
+const telegramConfig = config.telegram;
+
+const users = config.users.map((user) => ({
   ...user,
   found: false,
   notified: false,
@@ -59,7 +64,22 @@ async function handler() {
         user.notified = true;
       }
 
-      notifier.notify(`Report found for: ${usersToNotify.map((user) => user.name).join(", ")}`);
+      const message = `Report found for: ${usersToNotify.map((user) => user.name).join(", ")}`
+
+      notifier.notify(message);
+
+      if (telegramConfig.chatId && telegramConfig.token) {
+        await fetch(`https://api.telegram.org/bot${telegramConfig.token}/sendMessage`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: message,
+            chat_id: telegramConfig.chatId
+          })
+        })
+      }
     }
 
     console.log("-------------------------------------------------------------------------");
