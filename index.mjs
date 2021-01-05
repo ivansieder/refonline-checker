@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import notifier from "node-notifier";
 import puppeteer from "puppeteer";
 
-const users = (await fs.readFile("./users.json")).map((user) => ({
+const users = JSON.parse((await fs.readFile("./users.json", "utf8"))).map((user) => ({
   ...user,
   found: false,
   notified: false,
